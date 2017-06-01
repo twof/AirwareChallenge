@@ -128,15 +128,6 @@
 
                 y.domain([low, high]);
 
-                chart.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + (height - margin.bottom) + ")")
-                    .call(xAxis);
-
-                chart.append("g")
-                    .attr("transform", "translate(" + (margin.left) + ",0)")
-                    .call(yAxis);
-
                 // Create horizontal subsections
                 var bar = chart.selectAll("g")
                     .data(weather)
@@ -148,44 +139,7 @@
                          return "translate(" + x(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`) + ",0)";
                     });
 
-                // verticle error line
-                bar.enter()
-                    .append("line")
-                    .attr("y1", function(d) { return y(d.min); })
-                    .attr("x1", 50)
-                    .attr("x2", 50)
-                    .attr("y2", function(d) { return y(d.max); })
-                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
-
-
-                // points
-                bar.enter()
-                    .append("circle")
-                    .attr("cx", 50)
-                    .attr("cy", function(d) { return y(d.average); })
-                    .attr("r", 3);
-
-                bar.selectAll("line").each(function(index, el) {
-                    console.log( d3.select(this).attr("x2"),  d3.select(this).attr("y2"));
-                });
-
-                // top error line
-                bar.enter()
-                    .append("line")
-                    .attr("y1", function(d) { return y(d.max); })
-                    .attr("x1", 40)
-                    .attr("y2", function(d) { return y(d.max); })
-                    .attr("x2", 60)
-                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
-
-                // bottom error line
-                bar.enter()
-                    .append("line")
-                    .attr("y1", function(d) { return y(d.min); })
-                    .attr("x1", 40)
-                    .attr("y2", function(d) { return y(d.min); })
-                    .attr("x2", 60)
-                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
+                
             }
         };
 
