@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="Views/ChartView/">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Freelancer - Start Bootstrap Theme</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/chart.css"
+
+    <!-- Theme CSS -->
+    <link href="css/freelancer.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="index">
+<div id="skipnav"><a href="#maincontent">Skip to main content</a></div>
+
+    <!-- Navigation -->
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#portfolio">Portfolio</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                    <img class="img-responsive" src="img/profile.png" alt="">
+                    <div class="intro-text">
+                        <h1 class="name">Start Bootstrap</h1>
+                        <hr class="star-light">
+                        <span class="skills">Web Developer - Graphic Artist - User Experience Designer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <svg class="chart"></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-top page-scroll hidden-sm hidden-xs hidden-lg hidden-md">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/freelancer.min.js"></script>
+
+    <!-- D3 Graphs and Charts -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <script>
+        var margin = {top: 20, right: 30, bottom: 40, left: 40},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+        var x = d3.scalePoint()
+            .range([0 + margin.left, width])
+            .padding(.1);
+
+        var y = d3.scaleLinear()
+            .range([height - margin.bottom, 0]);
+
+        var chart = d3.select(".chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                const weather = JSON.parse(this.response);
+
+                // Get the highest and lowest temperature so we can set a range on our graph
+                const maxTemp = d3.max(weather, function(d) {return d.max});
+                const minTemp = d3.min(weather, function(d) {return d.min});
+
+                // Give ourselves some space in both directions
+                const high = (maxTemp > 100) ? maxTemp + 10 : 100
+                const low = (minTemp < 0) ? minTemp - 10 : 0
+
+                x.domain(weather.map(function(d) {
+                    var date = new Date(d.date * 1000);
+                    return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+                }));
+
+                y.domain([low, high]);
+
+                var xAxis = d3.axisBottom()
+                    .scale(x);
+
+                var yAxis = d3.axisLeft()
+                    .scale(y);
+
+                chart.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+                    .call(xAxis);
+
+                chart.append("g")
+                    .attr("transform", "translate(" + (margin.left) + ",0)")
+                    .call(yAxis);
+
+                // Create horizontal subsections
+                var bar = chart.selectAll("g")
+                    .data(weather)
+
+                bar.enter().append("g")
+                    .attr("transform", function(d, i) {
+                         var date = new Date(d.date * 1000);
+                         console.log(x(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`));
+                         return "translate(" + x(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`) + ",0)";
+                    });
+
+                // verticle error line
+                bar.enter()
+                    .append("line")
+                    .attr("y1", function(d) { return y(d.min); })
+                    .attr("x1", 50)
+                    .attr("x2", 50)
+                    .attr("y2", function(d) { return y(d.max); })
+                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
+
+
+                // points
+                bar.enter()
+                    .append("circle")
+                    .attr("cx", 50)
+                    .attr("cy", function(d) { return y(d.average); })
+                    .attr("r", 3);
+
+                bar.selectAll("line").each(function(index, el) {
+                    console.log( d3.select(this).attr("x2"),  d3.select(this).attr("y2"));
+                });
+
+                // top error line
+                bar.enter()
+                    .append("line")
+                    .attr("y1", function(d) { return y(d.max); })
+                    .attr("x1", 40)
+                    .attr("y2", function(d) { return y(d.max); })
+                    .attr("x2", 60)
+                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
+
+                // bottom error line
+                bar.enter()
+                    .append("line")
+                    .attr("y1", function(d) { return y(d.min); })
+                    .attr("x1", 40)
+                    .attr("y2", function(d) { return y(d.min); })
+                    .attr("x2", 60)
+                    .attr("style", "stroke:rgb(255,0,0);stroke-width:2");
+            }
+        };
+
+        function getWeather() {
+            const city = document.getElementById("city").value;
+            const numDays = document.getElementById("days").value;
+            const units = (document.getElementById("unit").value == "Fahrenheit") ? "imperial" : "metric"
+            const requestURL = `http://localhost:3000/forecast?cities=${city}&numDays=${numDays}&units=${units}`
+
+            xhttp.open("GET", requestURL, true);
+            xhttp.send();
+        }
+    </script>
+
+    <div class="container">
+        <div class="row" id="maincontent">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <select class="form-control" id="city">
+                        <option>San Francisco, CA</option>
+                        <option>New York, NY</option>
+                        <option>Paris, France</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="days">Number of Days:</label>
+                    <input id="days" type="number" min="1" max="20" />
+                </div>
+                <div class="form-group">
+                    <label for="unit">Units:</label>
+                    <select class="form-control" id="unit">
+                        <option>Fahrenheit</option>
+                        <option>Celsius</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-default" onclick="getWeather();">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
