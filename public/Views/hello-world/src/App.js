@@ -84,7 +84,6 @@ class WeatherForm extends Component {
         if(event.target.id === "city") { this.vals.city = event.target.value; }
 
         if(this.vals.city != undefined && this.vals.units != undefined && this.vals.numDays != undefined){
-            console.log("hello");
             this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units);
         }
     }
@@ -101,7 +100,7 @@ class WeatherForm extends Component {
                     <form className="form-inline" onSubmit={this.handleSubmit}>
                         <div className="form-group">
                             <label for="city">City:</label>
-                            <select className="form-control" id="city" value={this.state.city} onChange={this.handleChange}>
+                            <select className="form-control" id="city" value={this.vals.city} onChange={this.handleChange}>
                                 <option>San Francisco, CA</option>
                                 <option>New York, NY</option>
                                 <option>Paris, France</option>
@@ -109,13 +108,13 @@ class WeatherForm extends Component {
                         </div>
                         <div className="form-group">
                             <label for="days">Number of Days:</label>
-                            <input id="days" type="number" min="1" max="20" value={this.state.numDays} onChange={this.handleChange} />
+                            <input id="days" type="number" min="1" max="20" value={this.vals.numDays} onChange={this.handleChange} />
                         </div>
                         <div className="form-group">
                             <label for="unit">Units:</label>
-                            <select className="form-control" id="unit" value={this.state.unit} onChange={this.handleChange}>
-                                <option>Fahrenheit</option>
-                                <option>Celsius</option>
+                            <select className="form-control" id="unit" value={this.vals.units} onChange={this.handleChange}>
+                                <option value="imperial">Fahrenheit</option>
+                                <option value="metric">Celsius</option>
                             </select>
                         </div>
                         <input type="submit" value="Submit" />
