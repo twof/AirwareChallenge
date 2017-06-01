@@ -1,13 +1,12 @@
 /*jshint esversion: 6 */
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import './bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css';
 
 class Forecast extends Component {
     constructor(props) {
         super(props);
-        this.state = {weatherList: ""};
+        this.state = {weatherDict: {}};  // Mapping city name to weather data
         this.getWeather = this.getWeather.bind(this);
     }
 
@@ -17,16 +16,12 @@ class Forecast extends Component {
         let _this = this;
 
         xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState === 4 && this.status === 200) {
                 const weatherList = JSON.parse(this.response);
-                _this.setState({weatherList: weatherList});
-                // const lowsList = weatherList.map(function(item) {return item.min});
-                // const highsList = weatherList.map(function(item) {return item.max});
-                // const averagesList = weatherList.map(function(item) {return item.average});
-                //
-                // this.setState({highs: highsList, lows: lowsList, averages: averagesList});
+                var newWeatherDict = _this.state.weatherDict;
+                newWeatherDict[city] = weatherList;
 
-                console.log(_this.state.weatherList);
+                _this.setState({weatherDict: newWeatherDict});
             }
         };
 
@@ -37,17 +32,24 @@ class Forecast extends Component {
     }
 
     render() {
+        var wDict = this.state.weatherDict;
+        var wDictCities = Object.keys(wDict);
         var theWeather = [];
 
-        for(var i=0;i<this.state.weatherList.length;i++) {
-            let item = this.state.weatherList[i];
+        var forecasts = wDictCities.map(function(cityName, i) {
+            var currentForecast = wDict[cityName];
 
-            theWeather.push(<WeatherBox key={i} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>);
-        }
+            theWeather = currentForecast.map(function(item, j) {
+                return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>
+            });
+
+            return (<ForecastRow theWeather={theWeather}/>);
+        });
 
         return (
             <div className="container">
-                    <ForecastRow theWeather={theWeather}/>
+                <ForecastRow theWeather={forecasts}/>
+                <AddForecastButton/>
                 <div className="row">
                     <WeatherForm getWeather={this.getWeather}/>
                 </div>
@@ -58,11 +60,11 @@ class Forecast extends Component {
 
 class ForecastRow extends Component {
     render() {
+        console.log(this.props.theWeather);
         return (
             <div className="row">
                 {this.props.theWeather}
                 <RemoveForecastButton/>
-                <AddForecastButton/>
             </div>
         )
     }
@@ -101,8 +103,8 @@ class AddForecastButton extends Component {
 
     render() {
         return (
-            <button type="button" className="glyphicon glyphicon-plus" aria-label="Close" onClick={this.handleSubmit}>
-                <span aria-hidden="true">&times;</span>
+            <button type="button" className="btn btn-default btn-sm"  onClick={this.handleSubmit}>
+                <span className="glyphicon glyphicon-plus-sign"></span>+
             </button>
         )
     }
@@ -136,7 +138,7 @@ class WeatherForm extends Component {
             this.vals[event.target.id] = event.target.value;
         }
 
-        if(this.vals.city != undefined && this.vals.units != undefined && this.vals.numDays != undefined){
+        if(this.vals.city !== undefined && this.vals.units !== undefined && this.vals.numDays !== undefined){
             this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units);
         }
     }
