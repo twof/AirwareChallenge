@@ -61,9 +61,9 @@ class WeatherBox extends Component {
     render() {
         return (
             <div className="col-sm-2">
-                <h2>High: {this.props.high}</h2>
-                <h2>Low: {this.props.low} </h2>
-                <h2>Ave: {this.props.average}</h2>
+                <h3>High: {this.props.high}</h3>
+                <h3>Low: {this.props.low} </h3>
+                <h3>Ave: {this.props.average}</h3>
             </div>
         );
     }
@@ -76,10 +76,14 @@ class WeatherForm extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleChange();
     }
 
     handleChange(event) {
-        this.vals[event.target.id] = event.target.value;
+        if(event) {
+            this.vals[event.target.id] = event.target.value;
+        }
 
         if(this.vals.city != undefined && this.vals.units != undefined && this.vals.numDays != undefined){
             this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units);
