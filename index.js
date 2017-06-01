@@ -54,6 +54,6 @@ app.get('/forecast', function (req, res) {
     // Temp min, max, average, description, and date for each day
 });
 
-app.listen(3000, function () {
+app.listen(8080, function () {
     console.log('Example app listening on port 3000!');
 });
