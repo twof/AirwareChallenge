@@ -11,6 +11,7 @@ class Forecast extends Component {
         this.getWeather = this.getWeather.bind(this);
     }
 
+    // Sorta acts as a delagate ?
     getWeather(city, numDays, units) {
         var xhttp = new XMLHttpRequest();
         let _this = this;
@@ -46,14 +47,64 @@ class Forecast extends Component {
 
         return (
             <div className="container">
-                <div className="row">
-                    {theWeather}
-                </div>
+                    <ForecastRow theWeather={theWeather}/>
                 <div className="row">
                     <WeatherForm getWeather={this.getWeather}/>
                 </div>
             </div>
         );
+    }
+}
+
+class ForecastRow extends Component {
+    render() {
+        return (
+            <div className="row">
+                {this.props.theWeather}
+                <RemoveForecastButton/>
+                <AddForecastButton/>
+            </div>
+        )
+    }
+}
+
+class RemoveForecastButton extends Component {
+    constructor(props) {
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log("clicked");
+    }
+
+    render() {
+        return (
+            <button type="button" className="close" aria-label="Close" onClick={this.handleSubmit}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        )
+    }
+}
+
+class AddForecastButton extends Component {
+    constructor(props) {
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log("clicked");
+    }
+
+    render() {
+        return (
+            <button type="button" className="glyphicon glyphicon-plus" aria-label="Close" onClick={this.handleSubmit}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        )
     }
 }
 
