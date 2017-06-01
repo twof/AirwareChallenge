@@ -87,7 +87,6 @@ class WeatherForm extends Component {
     }
 
     handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
         event.preventDefault();
     }
 
@@ -115,7 +114,6 @@ class WeatherForm extends Component {
                                 <option value="metric">Celsius</option>
                             </select>
                         </div>
-                        <input type="submit" value="Submit" />
                     </form>
                 </div>
             </div>
