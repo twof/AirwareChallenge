@@ -72,16 +72,14 @@ class WeatherBox extends Component {
 class WeatherForm extends Component {
     constructor(props) {
         super(props);
-        this.vals = {numDays: "1", city: 'San Francisco, US', units: 'metric'};
+        this.vals = {numDays: "6", city: 'San Francisco, US', units: 'metric'};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        if(event.target.id === "days") { this.vals.numDays = event.target.value; }
-        if(event.target.id === "unit") { this.vals.units = event.target.value; }
-        if(event.target.id === "city") { this.vals.city = event.target.value; }
+        this.vals[event.target.id] = event.target.value;
 
         if(this.vals.city != undefined && this.vals.units != undefined && this.vals.numDays != undefined){
             this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units);
@@ -107,12 +105,12 @@ class WeatherForm extends Component {
                             </select>
                         </div>
                         <div className="form-group">
-                            <label for="days">Number of Days:</label>
-                            <input id="days" type="number" min="1" max="20" value={this.vals.numDays} onChange={this.handleChange} />
+                            <label for="numDays">Number of Days:</label>
+                            <input id="numDays" type="number" min="6" max="15" value={this.vals.numDays} onChange={this.handleChange} />
                         </div>
                         <div className="form-group">
-                            <label for="unit">Units:</label>
-                            <select className="form-control" id="unit" value={this.vals.units} onChange={this.handleChange}>
+                            <label for="units">Units:</label>
+                            <select className="form-control" id="units" value={this.vals.units} onChange={this.handleChange}>
                                 <option value="imperial">Fahrenheit</option>
                                 <option value="metric">Celsius</option>
                             </select>
