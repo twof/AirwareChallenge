@@ -92,13 +92,12 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
 
     <script>
-        var margin = {top: 20, right: 30, bottom: 40, left: 40},
+        var margin = {top: 40, right: 40, bottom: 40, left: 40},
             width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            height = 200 - margin.top - margin.bottom;
 
         var x = d3.scalePoint()
-            .range([0 + margin.left, width])
-            .padding(.1);
+            .range([0 + margin.left, width]);
 
         var y = d3.scaleLinear()
             .range([height - margin.bottom, 0]);
@@ -128,12 +127,6 @@
                 }));
 
                 y.domain([low, high]);
-
-                var xAxis = d3.axisBottom()
-                    .scale(x);
-
-                var yAxis = d3.axisLeft()
-                    .scale(y);
 
                 chart.append("g")
                     .attr("class", "x axis")
