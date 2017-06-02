@@ -36,6 +36,8 @@ class Forecast extends Component {
         var wDictCities = Object.keys(wDict);
         var theWeather = [];
 
+        console.log(wDictCities);
+
         var forecasts = wDictCities.map(function(cityName, i) {
             var currentForecast = wDict[cityName];
 
@@ -43,12 +45,12 @@ class Forecast extends Component {
                 return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>
             });
 
-            return (<ForecastRow theWeather={theWeather}/>);
+            return (<ForecastRow key={cityName} theWeather={theWeather}/>);
         });
 
         return (
             <div className="container">
-                <ForecastRow theWeather={forecasts}/>
+                {forecasts}
                 <AddForecastButton/>
                 <div className="row">
                     <WeatherForm getWeather={this.getWeather}/>
@@ -60,7 +62,6 @@ class Forecast extends Component {
 
 class ForecastRow extends Component {
     render() {
-        console.log(this.props.theWeather);
         return (
             <div className="row">
                 {this.props.theWeather}
@@ -78,7 +79,6 @@ class RemoveForecastButton extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log("clicked");
     }
 
     render() {
@@ -98,7 +98,6 @@ class AddForecastButton extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log("clicked");
     }
 
     render() {
@@ -155,9 +154,9 @@ class WeatherForm extends Component {
                         <div className="form-group">
                             <label for="city">City:</label>
                             <select className="form-control" id="city" value={this.vals.city} onChange={this.handleChange}>
-                                <option>San Francisco, CA</option>
-                                <option>New York, NY</option>
-                                <option>Paris, France</option>
+                                <option value="San Francisco, US">San Francisco, CA</option>
+                                <option value="New York, US">New York, NY</option>
+                                <option value="Paris, FR">Paris, France</option>
                             </select>
                         </div>
                         <div className="form-group">
