@@ -8,10 +8,11 @@ class Forecast extends Component {
         super(props);
         this.state = {weatherDict: {}};  // Mapping city name to weather data
         this.getWeather = this.getWeather.bind(this);
+        this.deleteRow = this.deleteRow.bind(this);
     }
 
     // Sorta acts as a delagate ?
-    getWeather(city, numDays, units) {
+    getWeather(city, numDays, units, oldCity) {
         var xhttp = new XMLHttpRequest();
         let _this = this;
 
@@ -20,6 +21,10 @@ class Forecast extends Component {
                 const weatherList = JSON.parse(this.response);
                 var newWeatherDict = _this.state.weatherDict;
                 newWeatherDict[city] = weatherList;
+
+                if(oldCity) {
+                    delete newWeatherDict[oldCity];
+                }
 
                 _this.setState({weatherDict: newWeatherDict});
             }
@@ -31,10 +36,19 @@ class Forecast extends Component {
         xhttp.send();
     }
 
+    // delagate for delete row button
+    deleteRow(cityName) {
+        var newWeatherDict = this.state.weatherDict;
+        delete newWeatherDict[cityName];
+
+        this.setState({weatherDict: newWeatherDict});
+    }
+
     render() {
         var wDict = this.state.weatherDict;
         var wDictCities = Object.keys(wDict);
         var theWeather = [];
+        var _this = this;
 
         console.log(wDictCities);
 
@@ -45,7 +59,7 @@ class Forecast extends Component {
                 return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>
             });
 
-            return (<ForecastRow key={cityName} theWeather={theWeather}/>);
+            return (<ForecastRow key={cityName} cityName={cityName} theWeather={theWeather} deleteRow={_this.deleteRow}/>);
         });
 
         return (
@@ -65,7 +79,7 @@ class ForecastRow extends Component {
         return (
             <div className="row">
                 {this.props.theWeather}
-                <RemoveForecastButton/>
+                <RemoveForecastButton cityName={this.props.cityName} deleteRow={this.props.deleteRow}/>
             </div>
         )
     }
@@ -79,6 +93,7 @@ class RemoveForecastButton extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        this.props.deleteRow(this.props.cityName);
     }
 
     render() {
@@ -124,6 +139,7 @@ class WeatherBox extends Component {
 class WeatherForm extends Component {
     constructor(props) {
         super(props);
+        this.oldCity = 'San Francisco, US';
         this.vals = {numDays: "6", city: 'San Francisco, US', units: 'metric'};
 
         this.handleChange = this.handleChange.bind(this);
@@ -138,7 +154,8 @@ class WeatherForm extends Component {
         }
 
         if(this.vals.city !== undefined && this.vals.units !== undefined && this.vals.numDays !== undefined){
-            this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units);
+            this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units, this.oldCity);
+            this.oldCity = this.vals.city;
         }
     }
 
