@@ -6,8 +6,9 @@ import './bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css';
 class Forecast extends Component {
     constructor(props) {
         super(props);
-        this.state = {weatherDict: {}, forcasts: []};  // Mapping city name to weather data
-        this.formState = {numDays: "6", city: 'San Francisco, US', units: 'metric'};
+        this.state = {weatherDict: {}, forecasts: []};  // Mapping city name to weather data
+        this.formState = {numDays: "5", city: 'San Francisco, US', units: 'metric'};
+
         this.getWeather = this.getWeather.bind(this);
         this.deleteRow = this.deleteRow.bind(this);
         this.addRow = this.addRow.bind(this);
@@ -20,7 +21,7 @@ class Forecast extends Component {
     getWeather(city, numDays, units, oldCity) {
         var xhttp = new XMLHttpRequest();
         let _this = this;
-        console.log(city, numDays, units);
+
         xhttp.onreadystatechange = function() {
             if (this.readyState === 4 && this.status === 200) {
                 const weatherList = JSON.parse(this.response);
@@ -28,11 +29,15 @@ class Forecast extends Component {
                 newWeatherDict[city] = weatherList;
 
                 if(oldCity) {
-                    delete newWeatherDict[oldCity];
+                    var newForecasts = _this.state.forecasts;
+                    newForecasts[newForecasts.length-1] = city;
+                    _this.setState({forecasts: newForecasts});
+                    //_this.deleteRow(oldCity);
+                    // delete newWeatherDict[oldCity];
                 }else{
-                    var newForecasts = _this.state.forcasts;
+                    var newForecasts = _this.state.forecasts;
                     newForecasts.push(city);
-                    _this.setState({forcasts: newForecasts});
+                    _this.setState({forecasts: newForecasts});
                 }
 
                 _this.setState({weatherDict: newWeatherDict});
@@ -46,11 +51,24 @@ class Forecast extends Component {
     }
 
     // delagate for delete row button
+    // removes the city from the forecasts list
+    // if there are no more of that city name in the forecasts list
+    // remove it from the dictionary as well
     deleteRow(cityName) {
+        var newForecastList = this.state.forecasts;
         var newWeatherDict = this.state.weatherDict;
-        delete newWeatherDict[cityName];
 
-        this.setState({weatherDict: newWeatherDict});
+        var index = newForecastList.indexOf(cityName);
+
+        if (index > -1) {
+            newForecastList.splice(index, 1);
+        }
+
+        if(newForecastList.indexOf(cityName) == -1) {
+            delete newWeatherDict[cityName];
+        }
+
+        this.setState({weatherDict: newWeatherDict, forecasts: newForecastList});
     }
 
     // delagate for add row button
@@ -68,14 +86,17 @@ class Forecast extends Component {
         var theWeather = [];
         var _this = this;
 
-        var forecasts = _this.state.forcasts.map(function(cityName, i) {
+        var forecasts = _this.state.forecasts.map(function(cityName, i) {
             var currentForecast = wDict[cityName];
+            console.log("current", currentForecast);
+            console.log("cityName", cityName);
+            console.log("wDict", wDict);
 
             theWeather = currentForecast.map(function(item, j) {
                 return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>
             });
 
-            return (<ForecastRow key={cityName} cityName={cityName} theWeather={theWeather} deleteRow={_this.deleteRow}/>);
+            return (<ForecastRow key={cityName, i} cityName={cityName} theWeather={theWeather} deleteRow={_this.deleteRow}/>);
         });
 
         return (
@@ -94,6 +115,7 @@ class ForecastRow extends Component {
     render() {
         return (
             <div className="row">
+                {this.props.cityName}
                 {this.props.theWeather}
                 <RemoveForecastButton cityName={this.props.cityName} deleteRow={this.props.deleteRow}/>
             </div>
@@ -145,9 +167,9 @@ class WeatherBox extends Component {
     render() {
         return (
             <div className="col-sm-2">
-                <h3>High: {this.props.high}</h3>
-                <h3>Low: {this.props.low} </h3>
-                <h3>Ave: {this.props.average}</h3>
+                <h4>High: {this.props.high}</h4>
+                <h4>Low: {this.props.low} </h4>
+                <h4>Ave: {this.props.average}</h4>
             </div>
         );
     }
@@ -157,7 +179,7 @@ class WeatherForm extends Component {
     constructor(props) {
         super(props);
         this.oldCity = 'San Francisco, US';
-        this.vals = {numDays: "6", city: 'San Francisco, US', units: 'metric'};
+        this.vals = {numDays: "5", city: 'San Francisco, US', units: 'metric'};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -196,7 +218,7 @@ class WeatherForm extends Component {
                         </div>
                         <div className="form-group">
                             <label for="numDays">Number of Days:</label>
-                            <input id="numDays" type="number" min="6" max="15" value={this.vals.numDays} onChange={this.handleChange} />
+                            <input id="numDays" type="number" min="5" max="15" value={this.vals.numDays} onChange={this.handleChange} />
                         </div>
                         <div className="form-group">
                             <label for="units">Units:</label>
