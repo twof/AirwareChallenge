@@ -6,16 +6,21 @@ import './bootstrap-4.0.0-alpha.6-dist/css/bootstrap.css';
 class Forecast extends Component {
     constructor(props) {
         super(props);
-        this.state = {weatherDict: {}};  // Mapping city name to weather data
+        this.state = {weatherDict: {}, forcasts: []};  // Mapping city name to weather data
+        this.formState = {numDays: "6", city: 'San Francisco, US', units: 'metric'};
         this.getWeather = this.getWeather.bind(this);
         this.deleteRow = this.deleteRow.bind(this);
+        this.addRow = this.addRow.bind(this);
+        this.updateFormState = this.updateFormState.bind(this);
     }
 
-    // Sorta acts as a delagate ?
+    // Sorta acts as a delagate?
+    // Existance of the `oldCity` param determines if we
+    //      want to replace the row or add a new one
     getWeather(city, numDays, units, oldCity) {
         var xhttp = new XMLHttpRequest();
         let _this = this;
-
+        console.log(city, numDays, units);
         xhttp.onreadystatechange = function() {
             if (this.readyState === 4 && this.status === 200) {
                 const weatherList = JSON.parse(this.response);
@@ -24,6 +29,10 @@ class Forecast extends Component {
 
                 if(oldCity) {
                     delete newWeatherDict[oldCity];
+                }else{
+                    var newForecasts = _this.state.forcasts;
+                    newForecasts.push(city);
+                    _this.setState({forcasts: newForecasts});
                 }
 
                 _this.setState({weatherDict: newWeatherDict});
@@ -44,15 +53,22 @@ class Forecast extends Component {
         this.setState({weatherDict: newWeatherDict});
     }
 
+    // delagate for add row button
+    addRow(cityName, numDays, units) {
+        this.getWeather(cityName, numDays, units);
+    }
+
+    updateFormState(cityName, numDays, units) {
+        this.formState = {numDays: numDays, city: cityName, units: units};
+    }
+
     render() {
         var wDict = this.state.weatherDict;
         var wDictCities = Object.keys(wDict);
         var theWeather = [];
         var _this = this;
 
-        console.log(wDictCities);
-
-        var forecasts = wDictCities.map(function(cityName, i) {
+        var forecasts = _this.state.forcasts.map(function(cityName, i) {
             var currentForecast = wDict[cityName];
 
             theWeather = currentForecast.map(function(item, j) {
@@ -65,9 +81,9 @@ class Forecast extends Component {
         return (
             <div className="container">
                 {forecasts}
-                <AddForecastButton/>
+                <AddForecastButton addRow={_this.addRow} cityName={this.formState.city} units={this.formState.units} numDays={this.formState.numDays}/>
                 <div className="row">
-                    <WeatherForm getWeather={this.getWeather}/>
+                    <WeatherForm getWeather={_this.getWeather} updateFormState={_this.updateFormState}/>
                 </div>
             </div>
         );
@@ -113,6 +129,7 @@ class AddForecastButton extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        this.props.addRow(this.props.cityName, this.props.numDays, this.props.units);
     }
 
     render() {
@@ -151,6 +168,7 @@ class WeatherForm extends Component {
     handleChange(event) {
         if(event) {
             this.vals[event.target.id] = event.target.value;
+            this.props.updateFormState(this.vals.city, this.vals.numDays, this.vals.units);
         }
 
         if(this.vals.city !== undefined && this.vals.units !== undefined && this.vals.numDays !== undefined){
