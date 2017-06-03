@@ -13,6 +13,7 @@ class Forecast extends Component {
         this.deleteRow = this.deleteRow.bind(this);
         this.addRow = this.addRow.bind(this);
         this.updateFormState = this.updateFormState.bind(this);
+        this.refreshAllRows = this.refreshAllRows.bind(this);
     }
 
     // Sorta acts as a delagate?
@@ -27,6 +28,8 @@ class Forecast extends Component {
                 const weatherList = JSON.parse(this.response);
                 var newWeatherDict = _this.state.weatherDict;
                 newWeatherDict[city] = weatherList;
+
+                console.log(newWeatherDict);
 
                 if(oldCity) {
                     var newForecasts = _this.state.forecasts;
@@ -78,6 +81,17 @@ class Forecast extends Component {
         this.formState = {numDays: numDays, city: cityName, units: units};
     }
 
+    refreshAllRows(numDays, units) {
+        let keys = Object.keys(this.state.weatherDict);
+        let _this = this;
+
+        _this.setState({forecast: []});
+
+        keys.forEach(function(city) {
+            _this.getWeather(city, numDays, units, city);
+        });
+    }
+
     render() {
         var wDict = this.state.weatherDict;
         var wDictCities = Object.keys(wDict);
@@ -99,7 +113,7 @@ class Forecast extends Component {
                 {forecasts}
                 <AddForecastButton addRow={_this.addRow} cityName={this.formState.city} units={this.formState.units} numDays={this.formState.numDays}/>
                 <div className="row">
-                    <WeatherForm getWeather={_this.getWeather} updateFormState={_this.updateFormState}/>
+                    <WeatherForm getWeather={_this.getWeather} updateFormState={_this.updateFormState} refreshAllRows={_this.refreshAllRows}/>
                 </div>
             </div>
         );
@@ -187,11 +201,16 @@ class WeatherForm extends Component {
         if(event) {
             this.vals[event.target.id] = event.target.value;
             this.props.updateFormState(this.vals.city, this.vals.numDays, this.vals.units);
-        }
 
-        if(this.vals.city !== undefined && this.vals.units !== undefined && this.vals.numDays !== undefined){
-            this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units, this.oldCity);
-            this.oldCity = this.vals.city;
+            if(this.vals.city !== undefined && this.vals.units !== undefined && this.vals.numDays !== undefined){
+                if(event.target.id === "units" || event.target.id === "numDays") {
+                    this.props.refreshAllRows(this.vals.numDays, this.vals.units);
+                }else{
+                    this.props.getWeather(this.vals.city, this.vals.numDays, this.vals.units, this.oldCity);
+                }
+
+                this.oldCity = this.vals.city;
+            }
         }
     }
 
