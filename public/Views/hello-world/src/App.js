@@ -32,8 +32,6 @@ class Forecast extends Component {
                     var newForecasts = _this.state.forecasts;
                     newForecasts[newForecasts.length-1] = city;
                     _this.setState({forecasts: newForecasts});
-                    //_this.deleteRow(oldCity);
-                    // delete newWeatherDict[oldCity];
                 }else{
                     var newForecasts = _this.state.forecasts;
                     newForecasts.push(city);
@@ -88,12 +86,9 @@ class Forecast extends Component {
 
         var forecasts = _this.state.forecasts.map(function(cityName, i) {
             var currentForecast = wDict[cityName];
-            console.log("current", currentForecast);
-            console.log("cityName", cityName);
-            console.log("wDict", wDict);
 
             theWeather = currentForecast.map(function(item, j) {
-                return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)}/>
+                return <WeatherBox key={i, j} high={item.max.toFixed(0)} low={item.min.toFixed(0)} average={item.average.toFixed(0)} description={item.description}/>
             });
 
             return (<ForecastRow key={cityName, i} cityName={cityName} theWeather={theWeather} deleteRow={_this.deleteRow}/>);
@@ -157,7 +152,7 @@ class AddForecastButton extends Component {
     render() {
         return (
             <button type="button" className="btn btn-default btn-sm"  onClick={this.handleSubmit}>
-                <span className="glyphicon glyphicon-plus-sign"></span>+
+                <span className="glyphicon glyphicon-plus-sign">+</span>
             </button>
         )
     }
@@ -166,7 +161,8 @@ class AddForecastButton extends Component {
 class WeatherBox extends Component {
     render() {
         return (
-            <div className="col-sm-2">
+            <div className="col-sm-2 WeatherBox">
+                <span className="weatherDescriptionText">{this.props.description}</span>
                 <h4>High: {this.props.high}</h4>
                 <h4>Low: {this.props.low} </h4>
                 <h4>Ave: {this.props.average}</h4>

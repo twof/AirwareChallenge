@@ -1,1 +1,14 @@
+.WeatherBox {
+    text-decoration:none;
+    position:relative;
+}
 
+.WeatherBox .weatherDescriptionText {
+    display:none;
+}
+
+.WeatherBox:hover .weatherDescriptionText{
+    display:block;
+    position:fixed;
+    overflow:hidden;
+}

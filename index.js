@@ -4,10 +4,10 @@ const app = express();
 const http = require('http');
 const Weather = require('./Models/Weather');
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
-    res.sendFile('./public/Views/ChartView/index.html', { root: __dirname });
+    res.sendFile('./public/Views/hello-world/build/index.html', {root: __dirname});
 });
 
 app.get('/forecast', function (req, res) {
