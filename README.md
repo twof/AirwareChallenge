@@ -1,8 +1,10 @@
 # React Weather Display
 ### Setup
 1. Install `yarn` with `brew install yarn`
-2. `cd AirwareChallenge/public/Views/hello-world`
-3. Run `yarn build`
+2. Install `create-react-app` with `npm install -g create-react-app`
+3. `cd AirwareChallenge/public/Views/hello-world`
+4. Run `npm install`
+5. Run `yarn build`
 
 ### How To Run
 
