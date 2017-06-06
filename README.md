@@ -1,8 +1,11 @@
 # React Weather Display
-## How To Run
+### Setup
+1. Install `yarn` with `brew install yarn`
+2. `cd AirwareChallenge/public/Views/hello-world`
+3. Run `yarn build`
+
+### How To Run
+
 1. `cd` into the root project directory
-2. `cd public/Views/hello-world`
-3. run `yarn build`
-4. `cd ../../..`
-5. Run `nodemon`
-6. Open up `localhost:8080`
+2. Run `nodemon`
+3. Open up `localhost:8080`
